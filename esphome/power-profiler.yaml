@@ -1,0 +1,123 @@
+esphome:
+  name: power-profiler
+  friendly_name: power_profiler
+
+esp8266:
+  board: nodemcuv2
+
+substitutions:
+  measure_freq: 100ms
+
+logger:
+  baud_rate: 0 #dibale logging via UART, used only for output
+  logs:
+    sensor: ERROR
+#  baud_rate: 115200 #it's the default when UART logging is enabled
+#  level: INFO
+#  logs: 
+#    i2c.arduino: ERROR
+#    safe_mode: ERROR
+
+time:
+  - platform: sntp
+    id: sntp_time
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "bFR5oxSWNqYTOcf2oxyXU+ydfMSsUvnaqF0a8EM/1Fg="
+
+ota:
+  - platform: esphome
+    password: "1a3dc64c40c4426e58f904d91b1326d1"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Power-Profiler Fallback Hotspot"
+    password: "12345678"
+
+captive_portal:
+
+web_server:
+  version: 3
+
+font:
+  - file: "gfonts://Roboto"
+    id: roboto_16
+    size: 16
+  - file: "gfonts://Roboto"
+    id: roboto_10
+    size: 10
+  
+text_sensor:
+  - platform: wifi_info
+    ip_address: 
+      name: ip_address
+      id: ip_address
+
+i2c:
+  scan: True
+  frequency: 400kHz
+  
+sensor:
+  - platform: ina3221
+    update_interval: ${measure_freq}
+    channel_1:
+      current:
+        name: "Current"
+        id: current
+      power:
+        name: "Power"
+        id: power
+      bus_voltage:
+        name: "Bus Voltage"
+        id: bus_voltage
+      shunt_voltage:
+        name: "Shunt Voltage"
+        id: shunt_voltage
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    lambda: |-
+      it.printf(0, 0, id(roboto_16), 
+        "%2.05f V",
+        id(bus_voltage).state);
+      it.printf(0, 17, id(roboto_16),
+        "%2.05f A",
+        id(current).state);
+      it.printf(0, 34, id(roboto_16), 
+        "%2.05f W",
+        id(power).state);
+      it.printf(0, 50, id(roboto_10), 
+        "%s",
+        id(ip_address).state.c_str());
+ 
+interval:
+  - interval: ${measure_freq}
+    then:
+      - lambda: |-
+          auto time = id(sntp_time).now();
+          char time_str[26];
+          snprintf(time_str, sizeof(time_str), "%04d-%02d-%02d %02d:%02d:%02d",
+            time.year, time.month, time.day_of_month,
+            time.hour, time.minute, time.second);
+          printf("%d,%s,%0.05f,%0.05f,%0.05f,%0.05f\n",
+            millis(),
+            time_str,
+            id(bus_voltage).state,
+            id(current).state,
+            id(power).state,
+            id(shunt_voltage).state); 
+          ESP_LOGI("metrics", "%s, %0.05f, %0.05f, %0.05f, %0.05f",
+            time_str,
+            id(bus_voltage).state,
+            id(current).state,
+            id(power).state,
+            id(shunt_voltage).state);
+    

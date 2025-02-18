@@ -1,0 +1,14 @@
+services:
+  esphome:
+    container_name: esphome
+    platform: "linux/amd64"
+    image: ghcr.io/esphome/esphome
+    environment:
+      - ESPHOME_DASHBOARD_USE_PING=true
+    volumes:
+      - "${PWD}:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+    restart: always
+    privileged: true
+    ports:
+      - 6052:6052

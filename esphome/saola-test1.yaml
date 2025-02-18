@@ -1,0 +1,44 @@
+esphome:
+  name: saola-test1
+  friendly_name: saola_test1
+
+esp32:
+  board: esp32-s2-saola-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "KUXgihXeXO+f0ZxWtxrpYGz002tSU4Jo7rsjQviumOM="
+
+ota:
+  - platform: esphome
+    password: "aa1dad11af0cd74ce64725c571a95077"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Saola-Test1 Fallback Hotspot"
+    password: "9ijovyqq7SMh"
+
+captive_portal:
+
+web_server:
+
+sensor:
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
+    update_interval: 1s
+
+deep_sleep:
+  id: deep_sleep_1
+  run_duration: 30s
+  sleep_duration: 30s

@@ -1,0 +1,99 @@
+esphome:
+  name: vamtest1
+  friendly_name: vamtest1
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  level: INFO
+
+time:
+  - platform: sntp
+    id: sntp_time
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "M7V2kNjhgFRN5K+0uiWJ3jBETH1ug1BSLiATYCM8kEU="
+
+ota:
+  - platform: esphome
+    password: "c8cdb764c27741dda7a9b366bec7007a"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Vamtest1 Fallback Hotspot"
+    password: "QhQ5Hw5EbKO5"
+
+captive_portal:
+
+web_server:
+  
+i2c:
+  scan: True
+  frequency: 400kHz
+  
+sensor:
+  - platform: ina3221
+    update_interval: 500ms
+    channel_1:
+      current:
+        name: "Current"
+        id: current
+      power:
+        name: "Power"
+        id: power
+      bus_voltage:
+        name: "Bus Voltage"
+        id: bus_voltage
+      shunt_voltage:
+        name: "Shunt Voltage"
+        id: shunt_voltage
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    lambda: |-
+      it.printf(0, 0, id(my_font), 
+        "%.03f [V]",
+        id(bus_voltage).state);
+      it.printf(0, 18, id(my_font),
+        "%0.03f [A]",
+        id(current).state);
+      it.printf(0, 36, id(my_font), 
+        "%0.03f [W]",
+        id(power).state);
+ 
+font:
+  - file: "gfonts://Roboto"
+    id: my_font
+    size: 16
+
+interval:
+  - interval: 500ms
+    then:
+      - lambda: |-
+          auto time = id(sntp_time).now();
+          char time_str[26];
+          snprintf(time_str, sizeof(time_str), "%04d-%02d-%02d %02d:%02d:%02d",
+            time.year, time.month, time.day_of_month,
+            time.hour, time.minute, time.second);
+          printf("%s, %0.03f, %0.03f, %0.03f, %0.03f\n",
+            time_str,
+            id(bus_voltage).state,
+            id(current).state,
+            id(power).state,
+            id(shunt_voltage).state); 
+          ESP_LOGI("metrics", "%s, %0.03f, %0.03f, %0.03f, %0.03f\n",
+            time_str,
+            id(bus_voltage).state,
+            id(current).state,
+            id(power).state,
+            id(shunt_voltage).state);

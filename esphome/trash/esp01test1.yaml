@@ -1,0 +1,26 @@
+esphome:
+  name: esp01test1
+  friendly_name: esp01test1
+
+esp8266:
+  board: esp07s
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "61nA/NUr4jMmR7vvz7N1WCVMHFZ0LKzLuzB+QiDZ/3I="
+
+ota:
+  - platform: esphome
+    password: "dcafc2ce3fa1b45da3f4e20bfdba1dc5"
+
+wifi:
+  ssid: "gdm"
+  ap:
+    ssid: "esp01"
+
+web_server:
+  port: 80
