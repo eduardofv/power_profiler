@@ -45,7 +45,7 @@ def parse_arguments():
     parser.add_argument("--filter", 
                         type=bool, default=True,
                         action=argparse.BooleanOptionalAction,
-                        help="Filter by Regex (default True)")
+                        help="Filter by Regex")
     args = parser.parse_args()
     return args
     
