@@ -6,7 +6,7 @@ esp8266:
   board: nodemcuv2
 
 substitutions:
-  measure_freq: 100ms
+  measure_freq: 10ms
 
 logger:
   baud_rate: 0 #dibale logging via UART, used only for output
