@@ -1,0 +1,30 @@
+esphome:
+  name: wemosd1-test-1
+  friendly_name: wemosd1_test_1
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "NgyGJVSxdEf3B2Wj4FNiuJCRLfXeO8Jsr0PuAURp5nY="
+
+ota:
+  - platform: esphome
+    password: "4dce058f1a0fd52fd053472258c6483a"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Wemosd1-Test-1 Fallback Hotspot"
+    password: "qUxY5Lv4J8FN"
+
+captive_portal:
+    

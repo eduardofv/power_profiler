@@ -3,7 +3,7 @@ esphome:
   friendly_name: wemosd1_test1
 
 esp8266:
-  board: wemos_d1_mini32
+  board: d1_mini_lite
 
 # Enable logging
 logger:
@@ -27,4 +27,16 @@ wifi:
     password: "8vgoF1jE8gPM"
 
 captive_portal:
-    
+
+web_server:
+
+sensor:
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
+    update_interval: 1s
+
+deep_sleep:
+  id: deep_sleep_1
+  run_duration: 10s
+  sleep_duration: 30s
