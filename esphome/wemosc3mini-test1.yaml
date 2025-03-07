@@ -1,0 +1,45 @@
+esphome:
+  name: wemosc3mini-test1
+  friendly_name: wemosc3mini-test1
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "pORX1shp5q8yIM1LVcYFwAlThss/AnT4WojwvAxsF1g="
+
+ota:
+  - platform: esphome
+    password: "fd36bbead5f22936fe0fc313433e2783"
+
+wifi:
+  output_power: 8.5
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Wemosc3Mini-Test1"
+    password: "H9X601jzsB4h"
+
+captive_portal:
+
+web_server:
+
+sensor:
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
+    update_interval: 1s
+
+deep_sleep:
+  id: deep_sleep_1
+  run_duration: 10s
+  sleep_duration: 30s
